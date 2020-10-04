@@ -19,6 +19,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+Widget bottomBar() {
+  return Container();
+}
+
 class MyHomePage extends StatelessWidget {
   final String title;
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -46,68 +50,136 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
       body: Container(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: GridView.extent(
-            maxCrossAxisExtent: 200,
-            padding: EdgeInsets.all(4),
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-            children: [
-              ProductItem('Tart Cheese', 10),
-              ProductItem('Tiramisu', 12),
-              ProductItem('Chocolate', 9),
-            ],
-          ),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(1.0),
+                  padding: const EdgeInsets.all(5.0),
+                  alignment: Alignment.topLeft,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        // <--- left side
+                        color: Colors.redAccent,
+                        width: 3.0,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'New Product',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            listNewProduct(),
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(2.0),
+                  padding: const EdgeInsets.all(6.0),
+                  alignment: Alignment.topLeft,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        // <--- left side
+                        color: Colors.redAccent,
+                        width: 3.0,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Hot Product',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            listHotProduct(),
+          ],
         ),
       ),
+      bottomNavigationBar: _bottomNormal(),
     );
   }
+}
+
+Widget listNewProduct() {
+  return Container(
+    height: 190,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: 5,
+      itemBuilder: (BuildContext context, int index) => Padding(
+        padding: EdgeInsets.all(4.0),
+        child: ProductItem('Tart Cheese', 10, 'New'),
+      ),
+    ),
+  );
+}
+
+Widget listHotProduct() {
+  return Flexible(
+    child: Container(
+      height: 400,
+      // width: double.infinity,
+      child: GridView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: 8,
+        gridDelegate:
+            new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        itemBuilder: (BuildContext context, int index) => Padding(
+          padding: EdgeInsets.all(4.0),
+          child: ProductItem('Tart Cheese', 20, 'Hot'),
+        ),
+      ),
+    ),
+  );
 }
 
 class ProductItem extends StatelessWidget {
   final String name;
   final num price;
-  const ProductItem(this.name, this.price);
+  final String feature;
+  const ProductItem(this.name, this.price, this.feature);
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height / 4,
       decoration: BoxDecoration(
-        color: Colors.lightBlue[300],
+        color: Colors.lightBlue[200],
       ),
       child: Stack(
-        alignment: const Alignment(1, 1),
+        alignment: const Alignment(1, 0.5),
         children: [
-          // Container(
-          //   child: Row(
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     mainAxisAlignment: MainAxisAlignment.end,
-          //     children: [
-          //       Text(
-          //         'new',
-          //         style: TextStyle(
-          //           color: Colors.red,
-          //           fontSize: 14,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Image(
             image: AssetImage('assets/images/cake.jpg'),
           ),
           Align(
             alignment: Alignment.topRight,
             child: Container(
+              padding: EdgeInsets.all(2),
+              margin: EdgeInsets.all(2),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'new',
+                    feature,
                     style: TextStyle(
-                      color: Colors.red,
+                      color: Colors.redAccent,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -125,60 +197,79 @@ class ProductItem extends StatelessWidget {
               padding: EdgeInsets.all(2),
               color: Colors.redAccent,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            name,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '\$' + price.toDouble().toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '\$' + price.toDouble().toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
 
-class ProductHot extends StatelessWidget {
-  const ProductHot({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [ProductItem('hot1', 100), ProductItem('hot2', 200)],
-      ),
+Widget _bottomNormal() => BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+          backgroundColor: Colors.redAccent,
+          icon: Icon(
+            Icons.home,
+            size: 30,
+          ),
+          title: Text(
+            "Home",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+        BottomNavigationBarItem(
+          backgroundColor: Colors.redAccent,
+          icon: Icon(
+            Icons.cake,
+            size: 30,
+          ),
+          title: Text(
+            "My Cake",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+        BottomNavigationBarItem(
+          backgroundColor: Colors.redAccent,
+          icon: Icon(
+            Icons.settings,
+            size: 30,
+          ),
+          title: Text(
+            "Setting",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+        //   BottomNavigationBarItem(
+        //     backgroundColor: Colors.redAccent,
+        //     icon: Icon(
+        //       Icons.contacts,
+        //       size: 30,
+        //     ),
+        //     title: Text(
+        //       "Contact",
+        //       style: TextStyle(fontSize: 20),
+        //     ),
+        //   )
+      ],
     );
-  }
-}
